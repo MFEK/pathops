@@ -1,0 +1,33 @@
+[package]
+name = "MFEKpathops"
+version = "0.0.0"
+authors = ["Fredrick Brennan <copypasteⒶkittens.ph>", "MFEK authors"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# parse command line arguments
+clap = { git = "https://github.com/MFEK/clap.rlib", branch = "validator_all" }
+
+# parses .glif files 
+glifparser = { git = "https://github.com/MFEK/glifparser.rlib", branch = "master", features=["mfek","skia"] }
+MFEKmath = { git = "https://github.com/MFEK/math.rlib", branch = "main"}
+#glifparser = { path = "../glifparser.rlib", features=["mfek", "skia"] } # for dev
+#MFEKmath = { path = "../math.rlib" } # for dev
+skia-safe = "*"
+flo_curves = "0.6"
+kurbo = "0.8"
+
+# For reading and writing glifs
+xmltree = "0.10.1"
+log = "0.4"
+env_logger = "0.9"
+
+[profile.release]
+opt-level = 'z'
+lto = true
+codegen-units = 1
+
+[features]
+debug = ["clap/debug"]
