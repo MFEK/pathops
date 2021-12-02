@@ -1,9 +1,8 @@
 use clap::{App, AppSettings, Arg, ArgMatches};
-use skia_safe as skia;
-use std::fs;
-
 use flo_curves as flo;
 use glifparser::outline::skia::{FromSkiaPath as _, ToSkiaPaths as _};
+use skia_safe as skia;
+use std::fs;
 use MFEKmath::Fixup as _;
 use MFEKmath::{Bezier, Piecewise};
 
@@ -40,31 +39,59 @@ pub fn clap_app() -> clap::App<'static> {
                 .required(true)
                 .takes_value(true)
                 .about("The path to the output glif file."))
+                .arg(Arg::new("simplify").long("simplify").short('s').takes_value(true).about("Simplifies the "))
 }
 
-fn apply_flo<PD: glifparser::PointData>(pathop: FloPathOp, operand: Option<&str>, outline: &glifparser::Outline<PD>) -> glifparser::Outline<()> {
+fn apply_flo<PD: glifparser::PointData>(
+    pathop: FloPathOp,
+    operand: Option<&str>,
+    outline: &glifparser::Outline<PD>,
+) -> glifparser::Outline<()> {
     let pw: Piecewise<Piecewise<Bezier>> = Piecewise::from(outline);
     let o_pw: Option<Piecewise<Piecewise<Bezier>>> = {
         operand.map(|operand| {
-            let operand: glifparser::Glif<()> =
-                glifparser::read(&fs::read_to_string(operand).expect("Failed to read operand path file!"))
-                    .expect("glifparser couldn't parse operand path glif. Invalid glif?");
+            let operand: glifparser::Glif<()> = glifparser::read(
+                &fs::read_to_string(operand).expect("Failed to read operand path file!"),
+            )
+            .expect("glifparser couldn't parse operand path glif. Invalid glif?");
             Piecewise::from(&operand.outline.expect("No <outline> in operand glif"))
         })
     };
 
     let out = match pathop {
-        FloPathOp::RemoveInterior => flo::bezier::path::path_remove_interior_points::<Piecewise<Bezier>, Piecewise<Bezier>>(&pw.segs, 1.),
-        FloPathOp::RemoveOverlapping => flo::bezier::path::path_remove_overlapped_points::<Piecewise<Bezier>, Piecewise<Bezier>>(&pw.segs, 1.),
-        FloPathOp::Intersect => flo::bezier::path::path_intersect::<Piecewise<Bezier>, Piecewise<Bezier>, Piecewise<Bezier>>(&pw.segs, &o_pw.expect("mode requires operand").segs, 1.),
-        FloPathOp::Add => flo::bezier::path::path_add::<Piecewise<Bezier>, Piecewise<Bezier>, Piecewise<Bezier>>(&pw.segs, &o_pw.expect("mode requires operand").segs, 1.),
-        FloPathOp::Sub => flo::bezier::path::path_sub::<Piecewise<Bezier>, Piecewise<Bezier>, Piecewise<Bezier>>(&pw.segs, &o_pw.expect("mode requires operand").segs, 1.),
+        FloPathOp::RemoveInterior => flo::bezier::path::path_remove_interior_points::<
+            Piecewise<Bezier>,
+            Piecewise<Bezier>,
+        >(&pw.segs, 1.),
+        FloPathOp::RemoveOverlapping => flo::bezier::path::path_remove_overlapped_points::<
+            Piecewise<Bezier>,
+            Piecewise<Bezier>,
+        >(&pw.segs, 1.),
+        FloPathOp::Intersect => flo::bezier::path::path_intersect::<
+            Piecewise<Bezier>,
+            Piecewise<Bezier>,
+            Piecewise<Bezier>,
+        >(&pw.segs, &o_pw.expect("mode requires operand").segs, 1.),
+        FloPathOp::Add => flo::bezier::path::path_add::<
+            Piecewise<Bezier>,
+            Piecewise<Bezier>,
+            Piecewise<Bezier>,
+        >(&pw.segs, &o_pw.expect("mode requires operand").segs, 1.),
+        FloPathOp::Sub => flo::bezier::path::path_sub::<
+            Piecewise<Bezier>,
+            Piecewise<Bezier>,
+            Piecewise<Bezier>,
+        >(&pw.segs, &o_pw.expect("mode requires operand").segs, 1.),
     };
 
     Piecewise::new(out, None).to_outline()
 }
 
-fn apply_skia(pathop: skia::PathOp, operand: Option<&str>, outline: &glifparser::Outline<()>) -> glifparser::Outline<()> {
+fn apply_skia(
+    pathop: skia::PathOp,
+    operand: Option<&str>,
+    outline: &glifparser::Outline<()>,
+) -> glifparser::Outline<()> {
     let skp = outline.to_skia_paths(None).combined();
     let mut final_skpath;
 
@@ -102,7 +129,7 @@ enum FloPathOp {
 #[derive(Clone, Debug, PartialEq, Eq)]
 enum EngineOp {
     Skia(skia::PathOp),
-    FloCurves(FloPathOp)
+    FloCurves(FloPathOp),
 }
 
 pub fn cli(matches: &ArgMatches) {
@@ -129,8 +156,16 @@ pub fn cli(matches: &ArgMatches) {
             .expect("glifparser couldn't parse input path glif. Invalid glif?");
 
     let mut final_output = match engine_op {
-        EngineOp::Skia(pathop) => apply_skia(pathop, operand_string, &path.outline.expect(".glif has no <outline>")),
-        EngineOp::FloCurves(pathop) => apply_flo(pathop, operand_string, &path.outline.expect(".glif has no <outline>")),
+        EngineOp::Skia(pathop) => apply_skia(
+            pathop,
+            operand_string,
+            &path.outline.expect(".glif has no <outline>"),
+        ),
+        EngineOp::FloCurves(pathop) => apply_flo(
+            pathop,
+            operand_string,
+            &path.outline.expect(".glif has no <outline>"),
+        ),
     };
 
     final_output.assert_colocated();
