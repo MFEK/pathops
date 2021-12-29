@@ -7,7 +7,7 @@ use env_logger;
 // mod validators;
 
 mod boolean;
-mod create_bezier;
+mod fit_to_points;
 fn main() {
     env_logger::init();
     #[allow(unused_mut)] // we actually use it if cfg(feature=fontforge)
@@ -18,13 +18,13 @@ fn main() {
         .author("Fredrick R. Brennan <copypasteⒶkittens⊙ph>; MFEK Authors")
         .about("A utility for applying path operations to contours (in UFO .glif format).")
         .subcommand(boolean::clap_app())
-        .subcommand(create_bezier::clap_app());
+        .subcommand(fit_to_points::clap_app());
 
     let matches = argparser.get_matches();
 
     match matches.subcommand_name() {
         Some("BOOLEAN") => boolean::cli(matches.subcommand_matches("BOOLEAN").unwrap()),
-        Some("CREATE") => create_bezier::cli(matches.subcommand_matches("CREATE").unwrap()),
+        Some("FIT") => fit_to_points::cli(matches.subcommand_matches("FIT").unwrap()),
         _ => {
             unreachable!()
         }
