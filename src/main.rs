@@ -3,11 +3,11 @@
 
 use clap::{App, AppSettings};
 use env_logger;
-#[allow(unused)]
-mod validators;
+// #[allow(unused)]
+// mod validators;
 
 mod boolean;
-
+mod fit_to_points;
 fn main() {
     env_logger::init();
     #[allow(unused_mut)] // we actually use it if cfg(feature=fontforge)
@@ -17,12 +17,14 @@ fn main() {
         .setting(AppSettings::DisableHelpSubcommand)
         .author("Fredrick R. Brennan <copypasteⒶkittens⊙ph>; MFEK Authors")
         .about("A utility for applying path operations to contours (in UFO .glif format).")
-        .subcommand(boolean::clap_app());
+        .subcommand(boolean::clap_app())
+        .subcommand(fit_to_points::clap_app());
 
     let matches = argparser.get_matches();
 
     match matches.subcommand_name() {
         Some("BOOLEAN") => boolean::cli(matches.subcommand_matches("BOOLEAN").unwrap()),
+        Some("FIT") => fit_to_points::cli(matches.subcommand_matches("FIT").unwrap()),
         _ => {
             unreachable!()
         }

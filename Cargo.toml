@@ -11,10 +11,10 @@ edition = "2018"
 clap = { git = "https://github.com/MFEK/clap.rlib", branch = "validator_all" }
 
 # parses .glif files 
-glifparser = { git = "https://github.com/MFEK/glifparser.rlib", branch = "master", features=["mfek","skia"] }
-MFEKmath = { git = "https://github.com/MFEK/math.rlib", branch = "main"}
+glifparser = { git = "https://github.com/MFEK/glifparser.rlib", branch = "master", default-features = false }
+MFEKmath = { git = "https://github.com/MFEK/math.rlib", branch = "main" }
 #glifparser = { path = "../glifparser.rlib", features=["mfek", "skia"] } # for dev
-#MFEKmath = { path = "../math.rlib" } # for dev
+# MFEKmath = { path = "../math.rlib" } # for dev
 skia-safe = "*"
 flo_curves = "0.6"
 kurbo = "0.8"
