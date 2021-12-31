@@ -17,21 +17,25 @@ pub fn cli(matches: &ArgMatches) {
 }
 pub fn clap_app() -> clap::App<'static> {
     App::new("FIT")
-    .setting(AppSettings::DeriveDisplayOrder)
-    .setting(AppSettings::AllowNegativeNumbers)
-    .about("Returns control points of an cubic bezier curve accorfing to knot(end) points")
-    .version("0.1.0")
-    .author("Fredrick Brennan <copypasteⒶkittens.ph>; Skia Authors; Andrew Hunter (flo_curves.rs); MFEK Authors")
-            .arg(Arg::new("input")
+        .setting(AppSettings::DeriveDisplayOrder)
+        .setting(AppSettings::AllowNegativeNumbers)
+        .about("Returns control points of an cubic bezier curve accorfing to knot(end) points")
+        .version("0.1.0")
+        .author("T Prajwal Prabhu <prajwalprabhu.tellar@gmail.com>")
+        .arg(
+            Arg::new("input")
                 .long("input")
                 .short('i')
                 .takes_value(true)
                 .required(true)
-                .about("The path to the input glif file."))
-            .arg(Arg::new("output")
+                .about("The path to the input glif file."),
+        )
+        .arg(
+            Arg::new("output")
                 .long("output")
                 .short('o')
                 .required(true)
                 .takes_value(true)
-                .about("The path to the output glif file."))
+                .about("The path to the output glif file."),
+        )
 }
