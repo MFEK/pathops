@@ -29,6 +29,40 @@ OPTIONS:
     -V, --version              Print version information
 ```
 
+```
+MFEKpathops-CLEAR 0.0.0
+
+Fredrick Brennan <copypasteⒶkittens.ph>; MFEK Authors
+
+Delete all contours in glyph
+
+USAGE:
+    MFEKpathops CLEAR [OPTIONS] --input <input>
+
+OPTIONS:
+    -i, --input <input>        The path to the input UFO `.glif` file. (will be overwritten!)
+    -P, --prune-contour-ops    Prune contour ops?
+    -h, --help                 Print help information
+    -V, --version              Print version information
+```
+
+```
+MFEKpathops-FIT 0.1.0
+
+T Prajwal Prabhu <prajwalprabhu.tellar@gmail.com>
+
+Returns control points of an cubic bezier curve accorfing to knot(end) points
+
+USAGE:
+    MFEKpathops FIT --input <input> --output <output>
+
+OPTIONS:
+    -i, --input <input>      The path to the input glif file.
+    -o, --output <output>    The path to the output glif file.
+    -h, --help               Print help information
+    -V, --version            Print version information
+```
+
 ## License
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,3 +76,5 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+
