@@ -87,6 +87,8 @@ fn apply_skia(pathop: skia::PathOp, operand: Option<&str>, outline: &glifparser:
         final_skpath = skp.op(&operand, pathop).unwrap();
     }
 
+    final_skpath = final_skpath.as_winding().unwrap();
+
     glifparser::Outline::from_skia_path(&final_skpath)
 }
 
