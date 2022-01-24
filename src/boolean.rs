@@ -128,12 +128,14 @@ pub fn cli(matches: &ArgMatches) {
         glifparser::read(&fs::read_to_string(path_string).expect("Failed to read path file!"))
             .expect("glifparser couldn't parse input path glif. Invalid glif?");
 
-    let mut final_output = match engine_op {
-        EngineOp::Skia(pathop) => apply_skia(pathop, operand_string, &path.outline.expect(".glif has no <outline>")),
-        EngineOp::FloCurves(pathop) => apply_flo(pathop, operand_string, &path.outline.expect(".glif has no <outline>")),
-    };
+    if let Some(ref outline) = path.outline.as_ref() {
+        let mut final_output = match engine_op {
+            EngineOp::Skia(pathop) => apply_skia(pathop, operand_string, outline),
+            EngineOp::FloCurves(pathop) => apply_flo(pathop, operand_string, outline),
+        };
 
-    final_output.assert_colocated();
-    path.outline = Some(final_output);
+        final_output.assert_colocated();
+        path.outline = Some(final_output);
+    }
     glifparser::write_to_filename(&path, out_string).unwrap();
 }
