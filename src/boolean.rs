@@ -4,7 +4,7 @@ use std::fs;
 
 use flo_curves as flo;
 use glifparser::outline::skia::{FromSkiaPath as _, ToSkiaPaths as _};
-use MFEKmath::Fixup as _;
+use glifparser::outline::RefigurePointTypes as _;
 use MFEKmath::{Bezier, Piecewise};
 
 pub fn clap_app() -> clap::App<'static> {
@@ -134,7 +134,7 @@ pub fn cli(matches: &ArgMatches) {
             EngineOp::FloCurves(pathop) => apply_flo(pathop, operand_string, outline),
         };
 
-        final_output.assert_colocated();
+        final_output.refigure_point_types();
         path.outline = Some(final_output);
     }
     glifparser::write_to_filename(&path, out_string).unwrap();
