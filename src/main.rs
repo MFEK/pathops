@@ -9,6 +9,7 @@ mod validators;
 mod clear;
 mod boolean;
 mod fit_to_points;
+mod refigure;
 fn main() {
     env_logger::init();
     #[allow(unused_mut)] // we actually use it if cfg(feature=fontforge)
@@ -20,7 +21,8 @@ fn main() {
         .about("A utility for applying path operations to contours (in UFO .glif format).")
         .subcommand(boolean::clap_app())
         .subcommand(fit_to_points::clap_app())
-        .subcommand(clear::clap_app());
+        .subcommand(clear::clap_app())
+        .subcommand(refigure::clap_app());
 
     let matches = argparser.get_matches();
 
@@ -28,6 +30,7 @@ fn main() {
         Some("BOOLEAN") => boolean::cli(matches.subcommand_matches("BOOLEAN").unwrap()),
         Some("FIT") => fit_to_points::cli(matches.subcommand_matches("FIT").unwrap()),
         Some("CLEAR") => clear::cli(matches.subcommand_matches("CLEAR").unwrap()),
+        Some("REFIGURE") => refigure::cli(matches.subcommand_matches("REFIGURE").unwrap()),
         _ => {
             unreachable!()
         }

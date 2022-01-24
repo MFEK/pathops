@@ -63,6 +63,20 @@ OPTIONS:
     -V, --version            Print version information
 ```
 
+```
+MFEKpathops-REFIGURE 0.0.1
+Fredrick Brennan <copypasteⒶkittens.ph>; MFEK Authors
+Fix point type/handle colocation errors in .glif files.
+
+USAGE:
+    MFEKpathops REFIGURE --input <input>
+
+OPTIONS:
+    -i, --input <input>    The path to the input UFO `.glif` file. (will be overwritten!)
+    -h, --help             Print help information
+    -V, --version          Print version information
+```
+
 ## License
 
 Licensed under the Apache License, Version 2.0 (the "License");
