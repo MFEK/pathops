@@ -16,13 +16,14 @@ pub fn clap_app() -> clap::App<'static> {
                 .short('i')
                 .takes_value(true)
                 .required(true)
-                .about("The path to the input UFO `.glif` file. (will be overwritten!)"))
+                .allow_invalid_utf8(true)
+                .help("The path to the input UFO `.glif` file. (will be overwritten!)"))
             .arg(Arg::new("prune-contour-ops")
                 .long("prune-contour-ops")
                 .short('P')
                 .takes_value(false)
                 .required(false)
-                .about("Prune contour ops?"))
+                .help("Prune contour ops?"))
 }
 
 pub fn cli(matches: &ArgMatches) {

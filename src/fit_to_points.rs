@@ -28,7 +28,7 @@ pub fn clap_app() -> clap::App<'static> {
                 .short('i')
                 .takes_value(true)
                 .required(true)
-                .about("The path to the input glif file."),
+                .help("The path to the input glif file."),
         )
         .arg(
             Arg::new("output")
@@ -36,6 +36,6 @@ pub fn clap_app() -> clap::App<'static> {
                 .short('o')
                 .required(true)
                 .takes_value(true)
-                .about("The path to the output glif file."),
+                .help("The path to the output glif file."),
         )
 }

@@ -8,14 +8,14 @@ edition = "2018"
 
 [dependencies]
 # parse command line arguments
-clap = { git = "https://github.com/MFEK/clap.rlib", branch = "validator_all" }
+clap = { git = "https://github.com/MFEK/clap.rlib", branch = "master" }
 
 # parses .glif files 
-glifparser = { git = "https://github.com/MFEK/glifparser.rlib", branch = "master", default-features = false }
-MFEKmath = { git = "https://github.com/MFEK/math.rlib", branch = "main" }
+glifparser = { git = "https://github.com/MFEK/glifparser.rlib", branch = "master", features = ["mfek", "skia"] }
+MFEKmath = { git = "https://github.com/MFEK/math.rlib", branch = "main", default-features = false }
 #glifparser = { path = "../glifparser.rlib", features=["mfek", "skia"] } # for dev
-# MFEKmath = { path = "../math.rlib" } # for dev
-skia-safe = "*"
+#MFEKmath = { path = "../math.rlib" } # for dev
+skia-safe = { version = "*", default-features = false }
 flo_curves = "0.6"
 kurbo = "0.8"
 
