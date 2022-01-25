@@ -18,10 +18,21 @@ pub fn clap_app() -> clap::App<'static> {
                 .required(true)
                 .allow_invalid_utf8(true)
                 .help("The path to the input UFO `.glif` file. (will be overwritten!)"))
+            .arg(Arg::new("remove-single-points")
+                .long("remove-single-points")
+                .short('1')
+                .takes_value(false)
+                .required(false)
+                .help("Remove contours with single points"))
 }
 
 pub fn cli(matches: &ArgMatches) {
     let path_string: path::PathBuf = matches.value_of_os("input").unwrap().into(); // required options shouldn't panic
+    let retain_threshold = if matches.is_present("remove-single-points") {
+        2
+    } else {
+        1
+    };
 
     let ext = path_string.extension().map(|e|e.to_ascii_lowercase().to_string_lossy().to_string()).unwrap_or(String::from("glif"));
     match ext.as_str() {
@@ -29,9 +40,9 @@ pub fn cli(matches: &ArgMatches) {
             let mut glif: glifparser::Glif<()> =
                 glifparser::read(&fs::read_to_string(&path_string).expect("Failed to read path file!"))
                     .expect("glifparser couldn't parse input path glif. Invalid glif?");
-            glif.outline.as_mut().map(|o|o.retain(|c|c.len() > 1));
             glif.outline.as_mut().map(|o|o.assert_colocated_within(0.01));
             glif.outline.as_mut().map(|o|o.refigure_point_types());
+            glif.outline.as_mut().map(|o|o.retain(|c|c.len() >= retain_threshold));
             glifparser::write_to_filename(&glif, path_string).unwrap();
         },
         "glifjson" => {
