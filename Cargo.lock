@@ -5,7 +5,7 @@ version = 3
 [[package]]
 name = "MFEKmath"
 version = "0.1.0"
-source = "git+https://github.com/MFEK/math.rlib?branch=main#fe36be1ec6bf24c3dd30365cbe24772c38b6ee7a"
+source = "git+https://github.com/MFEK/math.rlib?branch=main#bd3ee6bd3b30298a6c7f2b1db6877b24f3c95c37"
 dependencies = [
  "flo_curves",
  "glifparser",
@@ -385,7 +385,7 @@ checksum = "78cc372d058dcf6d5ecd98510e7fbc9e5aec4d21de70f65fea8fecebcd881bd4"
 [[package]]
 name = "glifparser"
 version = "1.2.0"
-source = "git+https://github.com/MFEK/glifparser.rlib?branch=master#20f9641e6047c2a87f3b309dd8a022c8f4b9748e"
+source = "git+https://github.com/MFEK/glifparser.rlib?branch=master#fd13591e1af13cc25305d27938673b6f5a803e11"
 dependencies = [
  "derivative",
  "derive_more",
