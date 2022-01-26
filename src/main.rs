@@ -6,10 +6,11 @@ use env_logger;
 #[allow(unused)]
 mod validators;
 
-mod clear;
 mod boolean;
+mod clear;
 mod fit_to_points;
 mod refigure;
+mod simplify;
 fn main() {
     env_logger::init();
     #[allow(unused_mut)] // we actually use it if cfg(feature=fontforge)
@@ -22,6 +23,7 @@ fn main() {
         .subcommand(boolean::clap_app())
         .subcommand(fit_to_points::clap_app())
         .subcommand(clear::clap_app())
+        .subcommand(simplify::clap_app())
         .subcommand(refigure::clap_app());
 
     let matches = argparser.get_matches();
@@ -31,6 +33,7 @@ fn main() {
         Some("FIT") => fit_to_points::cli(matches.subcommand_matches("FIT").unwrap()),
         Some("CLEAR") => clear::cli(matches.subcommand_matches("CLEAR").unwrap()),
         Some("REFIGURE") => refigure::cli(matches.subcommand_matches("REFIGURE").unwrap()),
+        Some("SIMPLIFY") => simplify::cli(matches.subcommand_matches("SIMPLIFY").unwrap()),
         _ => {
             unreachable!()
         }
