@@ -2,10 +2,13 @@ use clap::{App, AppSettings, Arg, ArgMatches};
 use skia_safe as skia;
 use std::fs;
 
+use flo::bezier::path as flopath;
 use flo_curves as flo;
 use glifparser::outline::skia::{FromSkiaPath as _, ToSkiaPaths as _};
 use glifparser::outline::RefigurePointTypes as _;
 use MFEKmath::{Bezier, Piecewise};
+
+type PwBez = Piecewise<Bezier>;
 
 pub fn clap_app() -> clap::App<'static> {
     App::new("BOOLEAN")
@@ -43,22 +46,21 @@ pub fn clap_app() -> clap::App<'static> {
 }
 
 fn apply_flo<PD: glifparser::PointData>(pathop: FloPathOp, operand: Option<&str>, outline: &glifparser::Outline<PD>) -> glifparser::Outline<()> {
-    let pw: Piecewise<Piecewise<Bezier>> = Piecewise::from(outline);
-    let o_pw: Option<Piecewise<Piecewise<Bezier>>> = {
+    let pw: Piecewise<PwBez> = Piecewise::from(outline);
+    let o_pw: Option<Piecewise<PwBez>> = {
         operand.map(|operand| {
-            let operand: glifparser::Glif<()> =
-                glifparser::read(&fs::read_to_string(operand).expect("Failed to read operand path file!"))
-                    .expect("glifparser couldn't parse operand path glif. Invalid glif?");
+            let operand: glifparser::Glif<()> = glifparser::read(&fs::read_to_string(operand).expect("Failed to read operand path file!"))
+                .expect("glifparser couldn't parse operand path glif. Invalid glif?");
             Piecewise::from(&operand.outline.expect("No <outline> in operand glif"))
         })
     };
 
     let out = match pathop {
-        FloPathOp::RemoveInterior => flo::bezier::path::path_remove_interior_points::<Piecewise<Bezier>, Piecewise<Bezier>>(&pw.segs, 1.),
-        FloPathOp::RemoveOverlapping => flo::bezier::path::path_remove_overlapped_points::<Piecewise<Bezier>, Piecewise<Bezier>>(&pw.segs, 1.),
-        FloPathOp::Intersect => flo::bezier::path::path_intersect::<Piecewise<Bezier>, Piecewise<Bezier>, Piecewise<Bezier>>(&pw.segs, &o_pw.expect("mode requires operand").segs, 1.),
-        FloPathOp::Add => flo::bezier::path::path_add::<Piecewise<Bezier>, Piecewise<Bezier>, Piecewise<Bezier>>(&pw.segs, &o_pw.expect("mode requires operand").segs, 1.),
-        FloPathOp::Sub => flo::bezier::path::path_sub::<Piecewise<Bezier>, Piecewise<Bezier>, Piecewise<Bezier>>(&pw.segs, &o_pw.expect("mode requires operand").segs, 1.),
+        FloPathOp::RemoveInterior => flopath::path_remove_interior_points::<PwBez, PwBez>(&pw.segs, 1.),
+        FloPathOp::RemoveOverlapping => flopath::path_remove_overlapped_points::<PwBez, PwBez>(&pw.segs, 1.),
+        FloPathOp::Intersect => flopath::path_intersect::<PwBez, PwBez, PwBez>(&pw.segs, &o_pw.expect("mode requires operand").segs, 1.),
+        FloPathOp::Add => flopath::path_add::<PwBez, PwBez, PwBez>(&pw.segs, &o_pw.expect("mode requires operand").segs, 1.),
+        FloPathOp::Sub => flopath::path_sub::<PwBez, PwBez, PwBez>(&pw.segs, &o_pw.expect("mode requires operand").segs, 1.),
     };
 
     Piecewise::new(out, None).to_outline()
@@ -69,14 +71,12 @@ fn apply_skia(pathop: skia::PathOp, operand: Option<&str>, outline: &glifparser:
     let mut final_skpath;
 
     let operand = operand.map(|oper| {
-        glifparser::read::<()>(
-            &fs::read_to_string(oper).expect("Failed to read operand path file!"),
-        )
-        .expect("glifparser couldn't parse operand path glif. Invalid glif?")
-        .outline
-        .expect("no <outline> in glif")
-        .to_skia_paths(None)
-        .combined()
+        glifparser::read::<()>(&fs::read_to_string(oper).expect("Failed to read operand path file!"))
+            .expect("glifparser couldn't parse operand path glif. Invalid glif?")
+            .outline
+            .expect("no <outline> in glif")
+            .to_skia_paths(None)
+            .combined()
     });
 
     if pathop == skia::PathOp::Union && operand.is_none() {
@@ -104,7 +104,7 @@ enum FloPathOp {
 #[derive(Clone, Debug, PartialEq, Eq)]
 enum EngineOp {
     Skia(skia::PathOp),
-    FloCurves(FloPathOp)
+    FloCurves(FloPathOp),
 }
 
 pub fn cli(matches: &ArgMatches) {
@@ -126,9 +126,8 @@ pub fn cli(matches: &ArgMatches) {
         s => panic!("flo_curves mode {} unavailable", s),
     };
 
-    let mut path: glifparser::Glif<()> =
-        glifparser::read(&fs::read_to_string(path_string).expect("Failed to read path file!"))
-            .expect("glifparser couldn't parse input path glif. Invalid glif?");
+    let mut path: glifparser::Glif<()> = glifparser::read(&fs::read_to_string(path_string).expect("Failed to read path file!"))
+        .expect("glifparser couldn't parse input path glif. Invalid glif?");
 
     if let Some(ref outline) = path.outline.as_ref() {
         let mut final_output = match engine_op {

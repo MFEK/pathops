@@ -8,9 +8,8 @@ pub fn cli(matches: &ArgMatches) {
     let path_string = matches.value_of("input").unwrap(); // required options shouldn't panic
 
     let out_string = matches.value_of("output").unwrap();
-    let mut glif: Glif<()> =
-        read(&fs::read_to_string(path_string).expect("Failed to read the path file!"))
-            .expect("glifparser couldn't parse input path gliph. Invalid gliph?");
+    let mut glif: Glif<()> = read(&fs::read_to_string(path_string).expect("Failed to read the path file!"))
+        .expect("glifparser couldn't parse input path gliph. Invalid gliph?");
     let final_result = fit_to_points::fit(glif.outline.unwrap());
     glif.outline = Some(final_result);
     glifparser::write_to_filename(&glif, out_string).expect("Failed to write ");

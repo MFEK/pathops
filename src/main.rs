@@ -5,8 +5,8 @@ use env_logger;
 #[allow(unused)]
 mod validators;
 
-mod clear;
 mod boolean;
+mod clear;
 mod fit_to_points;
 mod refigure;
 fn main() {
