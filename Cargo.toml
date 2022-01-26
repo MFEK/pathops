@@ -1,8 +1,8 @@
 [package]
 name = "MFEKpathops"
-version = "0.0.0"
-authors = ["Fredrick Brennan <copypasteⒶkittens.ph>", "MFEK authors"]
-edition = "2018"
+version = "0.1.0-beta1"
+authors = ["Fredrick Brennan <copypasteⒶkittens.ph>", "MFEK Authors"]
+edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
