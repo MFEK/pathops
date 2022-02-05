@@ -21,7 +21,7 @@ pub fn clap_app() -> clap::App<'static> {
                 .long("pathop")
                 .short('p')
                 .takes_value(true)
-                .possible_values(&["difference", "intersect", "union", "xor", "reverse_difference", "add", "intersect", "remove_interior", "remove_overlapping", "sub"])
+                .possible_values(&["difference", "intersect", "union", "xor", "reverse_difference", "add", "flo_intersect", "remove_interior", "remove_overlapping", "sub"])
                 .hide_possible_values(true)
                 .default_value("union")
                 .help("Boolean operation to apply. [skia values: difference, intersect, union, xor, reverse_difference] [flo_curves values: add, flo_intersect, remove_interior, remove_overlapping, sub]"))
@@ -56,11 +56,11 @@ fn apply_flo<PD: glifparser::PointData>(pathop: FloPathOp, operand: Option<&str>
     };
 
     let out = match pathop {
-        FloPathOp::RemoveInterior => flopath::path_remove_interior_points::<PwBez, PwBez>(&pw.segs, 1.),
-        FloPathOp::RemoveOverlapping => flopath::path_remove_overlapped_points::<PwBez, PwBez>(&pw.segs, 1.),
-        FloPathOp::Intersect => flopath::path_intersect::<PwBez, PwBez, PwBez>(&pw.segs, &o_pw.expect("mode requires operand").segs, 1.),
-        FloPathOp::Add => flopath::path_add::<PwBez, PwBez, PwBez>(&pw.segs, &o_pw.expect("mode requires operand").segs, 1.),
-        FloPathOp::Sub => flopath::path_sub::<PwBez, PwBez, PwBez>(&pw.segs, &o_pw.expect("mode requires operand").segs, 1.),
+        FloPathOp::RemoveInterior => flopath::path_remove_interior_points::<PwBez, PwBez>(&pw.segs, 0.000001),
+        FloPathOp::RemoveOverlapping => flopath::path_remove_overlapped_points::<PwBez, PwBez>(&pw.segs, 0.000001),
+        FloPathOp::Intersect => flopath::path_intersect::<PwBez, PwBez, PwBez>(&pw.segs, &o_pw.expect("mode requires operand").segs, 0.000001),
+        FloPathOp::Add => flopath::path_add::<PwBez, PwBez, PwBez>(&pw.segs, &o_pw.expect("mode requires operand").segs, 0.000001),
+        FloPathOp::Sub => flopath::path_sub::<PwBez, PwBez, PwBez>(&pw.segs, &o_pw.expect("mode requires operand").segs, 0.000001),
     };
 
     Piecewise::new(out, None).to_outline()
