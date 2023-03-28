@@ -65,3 +65,21 @@ pub fn arg_validator_suffix(f: &impl Fn(String) -> Result<(), String>, suffix: c
         f(v)
     }
 }
+
+pub fn arg_index_or_range(s: &str) -> Result<Vec<usize>, String> {
+    Ok(if s.contains('-') {
+        let parts: Vec<&str> = s.split('-').collect();
+        if parts.len() != 2 {
+            return Err(String::from("Invalid range format"));
+        }
+        let start: usize = parts[0].parse().map_err(|_| String::from("Invalid start index in range"))?;
+        let end: usize = parts[1].parse().map_err(|_| String::from("Invalid end index in range"))?;
+        if start > end {
+            return Err(String::from("Start index must be less than or equal to the end index in range"));
+        }
+        (start..end).collect()
+    } else {
+        let ret = s.parse::<usize>().map_err(|_| String::from("Invalid index"))?;
+        vec![ret]
+    })
+}

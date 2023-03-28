@@ -12,3 +12,6 @@ pub use fit::cli as fit_to_points_cli;
 mod refigure;
 pub use refigure::clap_app as refigure;
 pub use refigure::cli as refigure_cli;
+mod nudge;
+pub use nudge::clap_app as nudge;
+pub use nudge::cli as nudge_cli;

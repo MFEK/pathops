@@ -21,7 +21,8 @@ fn main() {
         .subcommand(bin_subcommands::fit_to_points())
         .subcommand(bin_subcommands::clear())
         //.subcommand(simplify::clap_app());
-        .subcommand(bin_subcommands::refigure());
+        .subcommand(bin_subcommands::refigure())
+        .subcommand(bin_subcommands::nudge());
 
     let matches = argparser.get_matches();
 
@@ -30,6 +31,7 @@ fn main() {
         Some("FIT") => bin_subcommands::fit_to_points_cli(matches.subcommand_matches("FIT").unwrap()),
         Some("CLEAR") => bin_subcommands::clear_cli(matches.subcommand_matches("CLEAR").unwrap()),
         Some("REFIGURE") => bin_subcommands::refigure_cli(matches.subcommand_matches("REFIGURE").unwrap()),
+        Some("NUDGE") => bin_subcommands::nudge_cli(matches.subcommand_matches("NUDGE").unwrap()),
         //Some("SIMPLIFY") => simplify::cli(matches.subcommand_matches("SIMPLIFY").unwrap()),
         _ => {
             unreachable!()
